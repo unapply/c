@@ -7,10 +7,10 @@
 <body>
 Create:
 <form onsubmit="return generate(this);">
-    <input name="month" id="month" placeholder="month" autofocus />
-    <input name="year" id="year" placeholder="year" />
-    <input name="source" id="source" placeholder="source" />
-    <input name="price" id="price" placeholder="price" />
+    <input name="month" id="month" placeholder="month" autofocus type="number" />
+    <input name="year" id="year" placeholder="year" type="number" />
+    <input name="source" id="source" placeholder="source" onkeyup="this.value = this.value.toLowerCase()" />
+    <input name="price" id="price" placeholder="price" type="number" />
     <input type="submit">
 </form>
 
@@ -18,8 +18,8 @@ Create:
 <br>
 From Existing:
 <form onsubmit="return decode(this);">
-    <input name="oldcode" placeholder="code" />
-    <input name="date" placeholder="small code" />
+    <input name="oldcode" placeholder="code" onkeyup="this.value = this.value.toLowerCase()" />
+    <input name="date" placeholder="small code" type="number" />
     <input type="submit" />
 </form>
 
