@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+Create:
+<form onsubmit="return generate(this);">
+    <input name="month" id="month" placeholder="month" autofocus />
+    <input name="year" id="year" placeholder="year" />
+    <input name="source" id="source" placeholder="source" />
+    <input name="price" id="price" placeholder="price" />
+    <input type="submit">
+</form>
+
+<br>
+<br>
+From Existing:
+<form onsubmit="return decode(this);">
+    <input name="oldcode" placeholder="code" />
+    <input name="date" placeholder="small code" />
+    <input type="submit" />
+</form>
+
+
+
+<h1 id="barcode"></h1>
+
+
+<script>
+    function decode(form) {
+        let date = splitDate(form.date.value);
+        let oldcode = form.oldcode.value;
+        let code = splitOldCodeFormat1(oldcode)
+        let price = code.beginPrice + code.endPrice;
+        // alert("price is: " + price + " of " + oldcode)
+        let source = code.source;
+
+        generateBarcode(date.month, date.year, price, source)
+
+        return false;
+    }
+
+    function splitDate(inputString) {
+        var year, month;
+
+        if (inputString.length !== 4 && inputString.length !== 5) {
+            return { month: Math.floor(Math.random() * 9) + 1 };
+        }
+
+        // Extract year from the first character
+        year = parseInt(inputString.charAt(0)) + 20;
+
+        // Extract month from the last character(s)
+        var lastChar = inputString.charAt(inputString.length - 1);
+        if (lastChar >= '3' && lastChar <= '9') {
+            // Last character is from '3' to '9', so month is the last character only
+            month = lastChar;
+        } else if (lastChar >= '0' && lastChar <= '2') {
+            // Last character is from '0' to '2', so month consists of the last two characters
+            month = inputString.slice(-2);
+        } else {
+            return "Error: Invalid month";
+        }
+
+        return { year: year, month: month };
+    }
+
+    function splitOldCodeFormat1(inputString) {
+        var endPrice, source, beginPrice;
+
+        if (inputString.length > 9) {
+            return "Error: String length should not exceed 9 characters";
+        } else if (inputString.length >= 7) {
+            // EndPrice: Last 2 characters
+            endPrice = inputString.slice(-2);
+
+            // Source: Last 4th and 3th characters
+            source = inputString.slice(-4, -2);
+
+            // BeginPrice: First 2 characters if total string length is 7 or 8
+            //               or 3 characters if string length is 9
+            if (inputString.length === 9) {
+                beginPrice = transformString(inputString.slice(0, 3));
+            } else {
+                beginPrice = transformString(inputString.slice(0, 2));
+            }
+        } else {
+            return "Error: String length should be at least 7 characters";
+        }
+
+        return { endPrice, source, beginPrice };
+    }
+
+    function transformString(inputString) {
+        var result = '';
+
+        var oddCharacterMapping = {
+            1: 4,
+            2: 5,
+            3: 6,
+            4: 7,
+            5: 8,
+            6: 9,
+            7: 0,
+            8: 1,
+            9: 2,
+            0: 3
+        };
+
+        var evenCharacterMapping = {
+            1: 8,
+            2: 9,
+            3: 0,
+            4: 1,
+            5: 2,
+            6: 3,
+            7: 4,
+            8: 5,
+            9: 6,
+            0: 7
+        };
+
+        for (var i = 0; i < inputString.length; i++) {
+            var char = inputString.charAt(i);
+
+            // Check if the index is odd or even
+            if (i % 2 === 0) { // Even index characters
+                if (char in evenCharacterMapping) {
+                    result += evenCharacterMapping[char];
+                }
+                // alert("even " + evenCharacterMapping[char] + " for " + char)
+            } else { // Odd index characters
+                if (char in oddCharacterMapping) {
+                    result += oddCharacterMapping[char];
+                }
+                // alert("odd " + evenCharacterMapping[char] + " for " + char)
+            }
+        }
+
+        return result;
+    }
+
+    function generate(form) {
+        let month = form.month.value;
+        let year = form.year.value;
+        let price = form.price.value;
+        let source = form.source.value;
+
+        return generateBarcode(month, year, price, source)
+    }
+
+    function generateBarcode(month, year, price, source) {
+        let barcode = ""
+
+        barcode += getYearCode(year) + getMonthCode(month)
+
+        // Split the price into two parts: first part and last two characters
+        var firstPart = price.slice(0, -2);
+        var secondPart = price.slice(-2);
+
+        // Strings to hold the output of each loop
+        var firstPartOutput = "";
+        var secondPartOutput = "";
+
+        // Iterate over each character in the first part
+        for (var i = 0; i < firstPart.length; i++) {
+            firstPartOutput += getPriceCode(firstPart.charAt(i));
+        }
+
+        // Iterate over each character in the second part
+        for (var j = 0; j < secondPart.length; j++) {
+            secondPartOutput += getPriceCode(secondPart.charAt(j));
+        }
+
+        let sourceCode = generateSourceCode(source);
+        barcode += firstPartOutput + generateRandomLowerCaseLetter() + sourceCode + secondPartOutput + generateRandomLowerCaseLetter()
+
+        document.getElementById("barcode").innerText = barcode
+        return false
+    }
+
+    function generateSourceCode(inputString) {
+        // Generate a random number between 2 to 9
+        var randomNum = Math.floor(Math.random() * 8) + 2;
+        var result = '';
+
+        // Iterate over each character in the input string
+        for (var i = 0; i < inputString.length; i++) {
+            var charCode = inputString.charCodeAt(i);
+
+            // Subtract the random number from the character code
+            var newCharCode = charCode - randomNum;
+
+            // If the new character code goes below 'a', loop back to 'z'
+            if (newCharCode < 97) {
+                // console.log("did some changes here, previous: " + newCharCode)
+                newCharCode = 122 - (96 - newCharCode);
+                // console.log("new one: " + newCharCode)
+            }
+
+            // Convert the new character code to its corresponding character
+            var newChar = String.fromCharCode(newCharCode);
+
+            // console.log("random: " + randomNum + "  old character code: " + charCode + " or " + String.fromCharCode(charCode) + " new characode: " + newCharCode + " or " + String.fromCharCode(newCharCode));
+
+            // Append the new character to the result
+            result += newChar;
+        }
+
+        // Prepend the result with the random number
+        result = randomNum + result;
+
+        return result;
+    }
+
+    function getPriceCode(numberString) {
+        var mapping = {
+            1: ["p"],
+            2: ["a", "b", "c"],
+            3: ["d", "e", "f"],
+            4: ["g", "h", "i"],
+            5: ["j", "k", "l"],
+            6: ["m", "n", "o"],
+            7: ["q", "r", "s"],
+            8: ["t", "u", "v"],
+            9: ["x", "y", "z"],
+            0: ["w"]
+        }
+        let number = parseInt(numberString)
+        // Get the array corresponding to the given number
+        var array = mapping[number];
+
+        // Check if the array exists and has elements
+        if (array && array.length > 0) {
+            // Generate a random index within the range of the array length
+            var randomIndex = Math.floor(Math.random() * array.length);
+            // Return the randomly selected value from the array
+            let result = array[randomIndex];
+            return result;
+        } else {
+            // Return null if the array is empty or doesn't exist
+            alert("invalid price code")
+            return "!";
+        }
+    }
+
+    function getYearCode(numberString) {
+        var mapping = {
+            23: ["d", "e", "f"],
+            24: ["g", "h", "i"],
+            25: ["j", "k", "l"],
+            26: ["m", "n", "o"],
+            27: ["q", "r", "s"],
+            28: ["t", "u", "v"],
+            29: ["x", "y", "z"],
+            0: ["a", "b", "c", "p", "w"]
+        }
+        let number = parseInt(numberString)
+        // Get the array corresponding to the given number
+        if (number >= 23 && number <= 29) {
+            var array = mapping[number];
+        } else {
+            var array = mapping[0];
+        }
+
+        // Check if the array exists and has elements
+        if (array && array.length > 0) {
+            // Generate a random index within the range of the array length
+            var randomIndex = Math.floor(Math.random() * array.length);
+            // Return the randomly selected value from the array
+            return array[randomIndex];
+        } else {
+            // Return null if the array is empty or doesn't exist
+            alert("invalid year")
+            return "!";
+        }
+    }
+
+    function getMonthCode(numberString) {
+        var mapping = {
+            1: ["p"],
+            2: ["c"],
+            3: ["d", "e", "f"],
+            4: ["g", "h", "i"],
+            5: ["j", "k", "l"],
+            6: ["m", "n", "o"],
+            7: ["q", "r", "s"],
+            8: ["t", "u", "v"],
+            9: ["x", "y", "z"],
+            10: ["w"],
+            11: ["a"],
+            12: ["b"]
+        }
+        // Get the array corresponding to the given number
+        let number = parseInt(numberString);
+        var array = mapping[number];
+
+        // Check if the array exists and has elements
+        if (array && array.length > 0) {
+            // Generate a random index within the range of the array length
+            var randomIndex = Math.floor(Math.random() * array.length);
+            // Return the randomly selected value from the array
+            return array[randomIndex];
+        } else {
+            // Return null if the array is empty or doesn't exist
+            alert("invalid month")
+            return "!";
+        }
+    }
+
+    function generateRandomLowerCaseLetter() {
+        var charCode;
+        charCode = Math.floor(Math.random() * 26) + 97;
+        return String.fromCharCode(charCode);
+    }
+</script>
+</body>
+</html>
