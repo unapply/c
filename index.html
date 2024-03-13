@@ -149,7 +149,7 @@
     function decode(form) {
         let date = splitDate(form.date.value);
         let oldcode = form.oldcode.value;
-        let code = splitOldCodeFormat1(oldcode)
+        let code = splitOldCode(oldcode)
         let price = code.beginPrice + code.endPrice;
         // alert("price is: " + price + " of " + oldcode)
         let source = code.source;
@@ -185,6 +185,20 @@
         return { year: year, month: month };
     }
 
+    function splitOldCode(oldcode) {
+        if (!isNaN(parseInt(oldcode[0]))) {
+            // new code
+            return splitOldCodeFormat1(oldcode)
+        } else if (isNaN(parseInt(oldcode[0]))) {
+            // old code
+            return splitOldCodeFormat2(oldcode)
+        } else {
+            alert("unknown oldcode")
+            console.log("Unknown format");
+            return null
+        }
+    }
+
     function splitOldCodeFormat1(inputString) {
         var endPrice, source, beginPrice;
 
@@ -207,6 +221,40 @@
         } else {
             return "Error: String length should be at least 7 characters";
         }
+
+        return { endPrice, source, beginPrice };
+    }
+
+    function splitOldCodeFormat2(inputString) {
+        // Remove hyphen from the input string
+        inputString = inputString.replace("-", "");
+
+        // Extract source
+        let source = inputString.substring(0, 2);
+        // Check if the third character is a number
+        if (isNaN(parseInt(inputString[2]))) {
+            alert("Error: Third character must be a number.");
+            return null;
+        }
+
+        // Extract endPrice
+        let endPrice = inputString.slice(-2);
+
+        // Find the index of "7C" and extract beginPrice
+        let endOfBeginPriceIndex = inputString.indexOf("7c");
+        if (endOfBeginPriceIndex === -1) {
+            alert("Error: '7c' not found.");
+            return null;
+        }
+        let beginPrice = inputString.substring(2, endOfBeginPriceIndex);
+
+        // Adjust beginPrice by reducing 10 from the first character
+        let parsedBeginPrice = parseInt(beginPrice);
+        if (parsedBeginPrice <= 10) {
+            alert("Error: Begin price must be greater than 10.");
+            return null;
+        }
+        beginPrice = parsedBeginPrice - 10;
 
         return { endPrice, source, beginPrice };
     }
