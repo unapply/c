@@ -121,6 +121,71 @@
         "LeggingPants": ["lp", "li"]
     };
 
+    let sources = {
+        //gandhi
+        "ma": "man pasand, mustak ahmad",
+        "pp": "preeti creation pinkal",
+        "ga": "kushi studio, gyaneshwar aggarwal",
+        "sd": "panama garments, sandeep",
+        "kg": "panamera keshav garg",
+        "ss": "kanha fashion siddharth sharma",
+        "bt": "kanha fashion bunty",
+        "pc": "perfect collection",
+        "mi": "maharani of india",
+        "sw": "miss me shanky wadhwa",
+        "gg": "roop garments, gopal gupta",
+        // lp nagar
+        "kp": "chiya",
+        "nk": "memsahab narendra kishnani",
+        "mv": "gt fashion, meenavati",
+        "ms": "taj milan sadana",
+        "vm": "trios vaibhav, mahesh",
+        "lk": "elite fashion lalit khanna",
+        // ng
+        "at": "mira shyam amit"
+    }
+
+    let allowedNewSources = ["ma", "pp", "ga", "sd", "kg", "ss",
+        "bt", "pc", "mi", "sw", "gg", "kp", "nk", "mv", "ms", "vm", "lk", "at"]
+    let allowedOldSources = ["gt", "gc", "aj"]
+    let allowedSources = allowedNewSources.concat(allowedOldSources);
+
+    let oldSources = {
+        "kd": "kiddly",
+        "ad": "sweet touch",
+        "r/f": "in formal dress section, no name",
+        "as": "ashi sadi gandhi ng",
+        "mp": "man pasand gandhi ng",
+        "d8": "daber",
+        "uj": "ujjawal garments, blossum",
+        "gj": "gatenjali, lp nagar",
+        // good ones
+        "nv": "navrang gandhi ng",
+        "sr": "sarder ahamda bade gandhi ng",
+        "ks": "kushi gandhi ng",
+        "ms": "miss me",
+        "mg": "mahesh ahamda bade gandhi ng",
+        "pg": "monu ahamda bade gandhi ng",
+        "gb": "gargi fashion",
+        "rm": "meddy ram ngr",
+        // lp ngr
+        "aj": "anuj fashion",
+        "hy": "hunny correction",
+        "vk": "vikaram norma range suit",
+        "cmm": "220 kurte",
+        "lk": "lakhnavi kurti",
+        "jl": "joyti maslin",
+        "ps": "imported meddy",
+        "gt": "gtfashion",
+        "ch": "chanderi suit",
+        "mh": "night suit",
+        "ms": "mera shyam",
+        "sk": "sai kripa",
+        "gc": "great choice",
+        "md": "middy imported lp ngr"
+
+    }
+
     function fillStyles() {
         // Get all select elements with name="style"
         let selects = document.querySelectorAll('select[name="style"]');
@@ -319,6 +384,17 @@
     }
 
     function generateBarcode(month, year, price, source, style) {
+        // Check if source is allowed
+        if (!allowedSources.includes(source)) {
+            alert("Error: Source not allowed. Source: " + source);
+            return false;
+        }
+
+        if (style === "aa") {
+            alert("Error: Please select style");
+            return false;
+        }
+
         let barcode = ""
 
         barcode += getYearCode(year) + getMonthCode(month)
