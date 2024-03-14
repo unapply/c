@@ -14,6 +14,7 @@
 
         form {
             margin-bottom: 20px;
+            display: none; /* Hide all forms by default */
         }
 
         input, select {
@@ -54,11 +55,28 @@
                 width: 100%;
             }
         }
+
+        /* Styles for tabs */
+        .tab {
+            cursor: pointer;
+            padding: 10px;
+            background-color: #f0f0f0;
+            margin-bottom: 5px;
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .active {
+            display: block;
+        }
     </style>
 </head>
 <body>
-<strong>Create:</strong>
-<form onsubmit="return generate(this);">
+
+<div class="tab" onclick="toggleForm('create')">Create</div>
+<form id="createForm" class="tab-content" onsubmit="event.preventDefault(); generate(this); return false;">
     <input name="month" id="month" placeholder="month" type="number" />
     <input name="year" id="year" placeholder="year" type="number" />
     <input name="source" id="source" placeholder="source" onkeyup="this.value = this.value.toLowerCase()" />
@@ -72,11 +90,8 @@
     <input type="submit">
 </form>
 
-<br>
-<h1 id="barcode"></h1>
-<br>
-<strong>From Existing:</strong>
-<form onsubmit="return decode(this);">
+<div class="tab" onclick="toggleForm('existing')">From Existing</div>
+<form id="existingForm" class="tab-content" onsubmit="event.preventDefault(); decode(this); return false;">
     <input name="oldcode" placeholder="code" onkeyup="this.value = this.value.toLowerCase()" />
     <input name="date" placeholder="small code" type="number" />
     <select name="style">
@@ -88,7 +103,25 @@
     <input type="submit" />
 </form>
 
+<canvas id="barcodeImage"></canvas>
+<h1 id="barcode" style="letter-spacing: 5px; padding-left: 50px; display: none;"></h1>
+
+<script>
+    function toggleForm(formId) {
+        var createForm = document.getElementById('createForm');
+        var existingForm = document.getElementById('existingForm');
+
+        if (formId === 'create') {
+            createForm.classList.toggle('active'); // Toggle class for create form
+            existingForm.classList.remove('active'); // Hide existing form
+        } else if (formId === 'existing') {
+            createForm.classList.remove('active'); // Hide create form
+            existingForm.classList.toggle('active'); // Toggle class for existing form
+        }
+    }
+</script>
 </body>
+<script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.0/dist/JsBarcode.all.min.js"></script>
 <script>
     // Get current date
     const currentDate = new Date();
@@ -492,6 +525,10 @@
         barcode += firstPartOutput + stylePart1 + sourceCode + secondPartOutput + stylePart2
 
         document.getElementById("barcode").innerText = barcode
+        JsBarcode("#barcodeImage", barcode, {
+            format: "CODE128", // You can choose different barcode formats
+            displayValue: true // Whether to display the text below the barcode
+        });
         return false
     }
 
@@ -630,5 +667,4 @@
         return String.fromCharCode(charCode);
     }
 </script>
-</body>
 </html>
