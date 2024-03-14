@@ -60,9 +60,12 @@
 <form onsubmit="return generate(this);">
     <input name="month" id="month" placeholder="month" type="number" />
     <input name="year" id="year" placeholder="year" type="number" />
-    <input name="source" id="source" placeholder="source" onkeyup="this.value = this.value.toLowerCase()" autofocus />
+    <input name="source" id="source" placeholder="source" onkeyup="this.value = this.value.toLowerCase()" />
     <select name="style">
         <option value="aa">Select Style</option>
+    </select>
+    <select name="color">
+        <option value="1">Select Color</option>
     </select>
     <input name="price" id="price" placeholder="price" type="number" />
     <input type="submit">
@@ -77,6 +80,9 @@
     <input name="date" placeholder="small code" type="number" />
     <select name="style">
         <option value="aa">Select Style</option>
+    </select>
+    <select name="color">
+        <option value="1">Select Color</option>
     </select>
     <input type="submit" />
 </form>
@@ -93,6 +99,19 @@
     document.getElementById('year').value = String(currentDate.getFullYear()).slice(-2);
 </script>
 <script>
+    let colors = {
+        "white": "w",
+        "rani": "r",
+        "pista": "p",
+        "lavender": "l",
+        "yellow": "y",
+        "mehandi": "m",
+        "green": "g",
+        "black": "b",
+        "wine": "w",
+        "blue": "l"
+    };
+
     let styles = {
         "Shirts": ["sh", "si"],
         "Suits": ["su", "st"],
@@ -186,14 +205,16 @@
 
     }
 
-    function fillStyles() {
+    function fillSelectOptions() {
         // Get all select elements with name="style"
         let selects = document.querySelectorAll('select[name="style"]');
 
         // Loop through each select element and populate with options
         selects.forEach(select => {
+            // Extract keys and sort them
+            let sortedKeys = Object.keys(styles).sort();
             // Loop through the styles object and add options
-            for (let key in styles) {
+            for (let key of sortedKeys) {
                 if (styles.hasOwnProperty(key)) {
                     // Create an option element
                     let option = document.createElement('option');
@@ -207,9 +228,34 @@
                 }
             }
         })
+
+
+        // fill the colors
+        // Get all select elements with name="style"
+        let colorSelects = document.querySelectorAll('select[name="color"]');
+
+        // Loop through each select element and populate with options
+        colorSelects.forEach(select => {
+            // Extract keys and sort them
+            let sortedKeys = Object.keys(colors).sort();
+            // Loop through the styles object and add options
+            for (let key of sortedKeys) {
+                if (colors.hasOwnProperty(key)) {
+                    // Create an option element
+                    let option = document.createElement('option');
+
+                    // Set the value and text of the option
+                    option.value = colors[key];
+                    option.text = key;
+
+                    // Append the option to the select element
+                    select.appendChild(option);
+                }
+            }
+        })
     }
 
-    fillStyles()
+    fillSelectOptions()
 
     function decode(form) {
         let date = splitDate(form.date.value);
@@ -219,10 +265,22 @@
         // alert("price is: " + price + " of " + oldcode)
         let source = code.source;
         let style = form.style.value;
+        let color = form.color.value;
 
-        generateBarcode(date.month, date.year, price, source, style)
+        generateBarcode(date.month, date.year, price, source, style, color)
 
         return false;
+    }
+
+    function generate(form) {
+        let month = form.month.value;
+        let year = form.year.value;
+        let price = form.price.value;
+        let source = form.source.value;
+        let style = form.style.value;
+        let color = form.color.value;
+
+        return generateBarcode(month, year, price, source, style, color)
     }
 
     function splitDate(inputString) {
@@ -373,17 +431,7 @@
         return result;
     }
 
-    function generate(form) {
-        let month = form.month.value;
-        let year = form.year.value;
-        let price = form.price.value;
-        let source = form.source.value;
-        let style = form.style.value;
-
-        return generateBarcode(month, year, price, source, style)
-    }
-
-    function generateBarcode(month, year, price, source, style) {
+    function generateBarcode(month, year, price, source, style, color) {
         // Check if source is allowed
         if (!allowedSources.includes(source)) {
             alert("Error: Source not allowed. Source: " + source);
@@ -395,9 +443,14 @@
             return false;
         }
 
+        if (color === "1" || color.length !== 1) {
+            alert("Error: Please select color");
+            return false;
+        }
+
         let barcode = ""
 
-        barcode += getYearCode(year) + getMonthCode(month)
+        barcode += getYearCode(year) + getMonthCode(month) + color
 
         // Split the price into two parts: first part and last two characters
         var firstPart = price.slice(0, -2);
