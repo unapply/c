@@ -213,8 +213,9 @@
 
     let allowedNewSources = ["ma", "pp", "ga", "sd", "kg", "ss",
         "bt", "pc", "mi", "sw", "gg", "kp", "nk", "mv", "ms", "vm", "lk", "at"]
-    let allowedOldSources = ["gt", "gc", "aj"]
-    let allowedSources = allowedNewSources.concat(allowedOldSources);
+    let allowedOldSources = ["gt", "gc", "aj", "db"]
+    let allowedUnknownSources = ["bw"]
+    let allowedSources = allowedNewSources.concat(allowedOldSources).concat(allowedUnknownSources)
 
     let oldSources = {
         "kd": "kiddly",
@@ -222,7 +223,7 @@
         "r/f": "in formal dress section, no name",
         "as": "ashi sadi gandhi ng",
         "mp": "man pasand gandhi ng",
-        "d8": "daber",
+        "db": "daber",
         "uj": "ujjawal garments, blossum",
         "gj": "gatenjali, lp nagar",
         // good ones
