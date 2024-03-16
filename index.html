@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -208,13 +207,17 @@
         "vm": "trios vaibhav, mahesh",
         "lk": "elite fashion lalit khanna",
         // ng
-        "at": "mira shyam amit"
+        "at": "mira shyam amit",
+        // k bagh
+        "vs": "vks previously vks vikram suits",
+        "bw": "shristi bitoo wadhwa"
     }
 
     let allowedNewSources = ["ma", "pp", "ga", "sd", "kg", "ss",
-        "bt", "pc", "mi", "sw", "gg", "kp", "nk", "mv", "ms", "vm", "lk", "at"]
+        "bt", "pc", "mi", "sw", "gg", "kp", "nk", "mv", "ms", "vm", "lk", "at",
+        "vs", "bw"]
     let allowedOldSources = ["gt", "gc", "gj", "aj", "db", "hy", "uj"]
-    let allowedUnknownSources = ["bw"]
+    let allowedUnknownSources = []
     let allowedSources = allowedNewSources.concat(allowedOldSources).concat(allowedUnknownSources)
 
     let oldSources = {
@@ -249,8 +252,8 @@
         "ms": "mera shyam",
         "sk": "sai kripa",
         "gc": "great choice",
-        "md": "middy imported lp ngr"
-
+        "md": "middy imported lp ngr",
+        "vks": "vikram suits k bagh"
     }
 
     function fillSelectOptions() {
