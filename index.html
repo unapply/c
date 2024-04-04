@@ -85,7 +85,7 @@
     <select name="color">
         <option value="1">Select Color</option>
     </select>
-    <input name="price" id="price" placeholder="price" type="number" onfocus="this." />
+    <input name="price" id="price" placeholder="price" type="number" />
     <input type="submit">
 </form>
 
@@ -101,7 +101,7 @@
     </select>
     <input type="submit" />
 </form>
-
+<h1>Min: <span id="minamount"></span> Max: <span id="maxamount"></span> High: <span id="superamount"></span></h1>
 <canvas id="barcodeImage"></canvas>
 <h1 id="barcode" style="letter-spacing: 5px; padding-left: 50px; display: none;"></h1>
 
@@ -330,6 +330,7 @@
         let color = form.color.value;
 
         generateBarcode(date.month, date.year, price, source, style, color)
+        generateMinMax(price)
 
         return false;
     }
@@ -342,7 +343,10 @@
         let style = form.style.value;
         let color = form.color.value;
 
-        return generateBarcode(month, year, price, source, style, color)
+        generateBarcode(month, year, price, source, style, color)
+        generateMinMax(price)
+
+        return false;
     }
 
     function splitDate(inputString) {
@@ -545,6 +549,16 @@
             displayValue: true // Whether to display the text below the barcode
         });
         return false
+    }
+
+    function generateMinMax(price) {
+        var minprice = Math.round(price * 1.45 / 50) * 50;
+        var maxprice = Math.round(price * 2.15 / 50) * 50;
+        var superamount = Math.round(price * 2.75 / 50) * 50;
+
+        document.getElementById("minamount").textContent = minprice.toFixed(0);
+        document.getElementById("maxamount").textContent = maxprice.toFixed(0);
+        document.getElementById("superamount").textContent = superamount.toFixed(0);
     }
 
     function generateSourceCode(inputString) {
