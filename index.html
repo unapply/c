@@ -204,6 +204,7 @@
         "mi": "maharani of india",
         "sw": "miss me shanky wadhwa",
         "gg": "roop garments, gopal gupta",
+        "sf": "shraddha fashion studio",
         // lp nagar
         "kp": "chiya",
         "nk": "memsahab narendra kishnani",
@@ -548,6 +549,13 @@
             format: "CODE128", // You can choose different barcode formats
             displayValue: true // Whether to display the text below the barcode
         });
+
+        setTimeout(function() {
+            JsBarcode("#barcodeImage", "0", {
+                format: "CODE128", // You can choose different barcode formats
+                displayValue: true // Whether to display the text below the barcode
+            });
+        }, 5000);
         return false
     }
 
