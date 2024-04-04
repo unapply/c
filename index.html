@@ -101,9 +101,9 @@
     </select>
     <input type="submit" />
 </form>
-<h1>Min: <span id="minamount"></span> Max: <span id="maxamount"></span> High: <span id="superamount"></span></h1>
-<canvas id="barcodeImage"></canvas>
+<p>Min: <strong id="minamount"></strong> Max: <strong id="maxamount"></strong> High: <strong id="superamount"></strong></p>
 <h1 id="barcode" style="letter-spacing: 5px; padding-left: 50px; display: none;"></h1>
+<canvas id="barcodeImage"></canvas>
 
 <script>
     function toggleForm(formId) {
@@ -544,7 +544,11 @@
 
         barcode += firstPartOutput + stylePart1 + sourceCode + secondPartOutput + stylePart2
 
-        document.getElementById("barcode").innerText = barcode
+        var barcodeElement = document.getElementById("barcode");
+
+        barcodeElement.innerText = barcode;
+        barcodeElement.style.display = "none";
+
         JsBarcode("#barcodeImage", barcode, {
             format: "CODE128", // You can choose different barcode formats
             displayValue: true // Whether to display the text below the barcode
@@ -555,7 +559,8 @@
                 format: "CODE128", // You can choose different barcode formats
                 displayValue: true // Whether to display the text below the barcode
             });
-        }, 5000);
+            barcodeElement.style.display = "block";
+        }, 7000);
         return false
     }
 
